@@ -1,5 +1,6 @@
 from pathlib import Path
 import requests, sys, os
+# api operations class
 class APIoperations(object):
     def __init__(self, candidateNumber, api, filePath):
         self.api = api
@@ -19,7 +20,7 @@ class APIoperations(object):
     def set_filePath(self, newFilePath):
         self.filePath = newFilePath
 
-
+    # returns the api response
     def get_APIResponse(self, city):
         if city == "all":
             query = self.api + "/cities"
@@ -39,10 +40,7 @@ class APIoperations(object):
             response = requests.get(apiCall)
             response.raise_for_status()
             
-            if returnJSON:
-                return response.json() 
-            else:
-                return apiCall
+            return apiCall
         except Exception:
             raise SystemExit("Please enter a valid API")
     @staticmethod
@@ -66,14 +64,13 @@ class APIoperations(object):
     @staticmethod
     def inputCheck(argList):
         try:
-            print(argList)
             # check candidate
             candidateNumber = int(argList[0])
             apiLink = argList[1]
             filePath = argList[2]
             fileName = argList[3]
             # check api
-            validatedAPI = APIoperations.get_apiValidatedResponse(apiLink, False)
+            validatedAPI = APIoperations.get_apiValidatedResponse(apiLink)
             # check filepath
             validatedPath = APIoperations.validate_Path(filePath, fileName)
 
@@ -83,16 +80,18 @@ class APIoperations(object):
         except ValueError:
             raise SystemExit("Please enter a valid candidate number")
 
+
 class solutions(object):
+    # initialises the specific weather API object for these questions
     def __init__(self, weatherAPIObject):
         self.weatherAPI = weatherAPIObject
+    
     def question1(self):
-        classResponse = self.weatherAPI.get_APIResponse("bath")
-        answer = (classResponse["friday"][10])["temperature"]
+        fullResponse = self.weatherAPI.get_APIResponse("bath")
+        answer = (fullResponse["friday"][10])["temperature"]
         return answer
 
     def question2(self):
-
         fullResponse = self.weatherAPI.get_APIResponse("edinburgh")
         for hour in fullResponse["friday"]:
             if hour["pressure"] < 1000:
@@ -126,6 +125,7 @@ class solutions(object):
                         if city > topCity:
                             topCity = city
         return topCity
+
     def question5(self):
         fullResponse = self.weatherAPI.get_APIResponse("all")
         for city in fullResponse["cities"]:
@@ -134,9 +134,9 @@ class solutions(object):
                 for hour in cityData[day]:
                     if hour["temperature"] < 2 and hour["precipitation"] != 0:
                         return True
-
         return False
 
+    # answers all questions
     def answerAll(self):
         answers = [self.question1(), self.question2(), self.question3(), self.question4(), self.question5()]
         return answers

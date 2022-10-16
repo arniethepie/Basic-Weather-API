@@ -12,3 +12,8 @@ with a valid candidate number, API, file path and file name. The file path can b
 ## Example
 `python basicweatherapi.py 51 http://weather-api.eba-jgjmjs6p.eu-west-2.elasticbeanstalk.com/api current answers`
 
+
+## Requirements
+To install the requests module not included with Python, run the following
+
+`pip install requests`
